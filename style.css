@@ -82,8 +82,14 @@ button{
     font-size: 18pt;
     border-radius: 7.5px;
     box-shadow: 1px 1px 2.5px grey;
+    background-color: beige;
 }
 
 .action{
     font-weight: bold;
+}
+
+.disabled{
+    background-color: rgb(172, 172, 172);
+    color: grey;
 }
