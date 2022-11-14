@@ -87,9 +87,44 @@ button{
 
 .action{
     font-weight: bold;
+    background-color: rgb(255, 224, 220);
 }
 
 .disabled{
     background-color: rgb(172, 172, 172);
     color: grey;
+}
+
+#equals{
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
+
+.header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+}
+.header-text{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+.header-text2{
+    font-size: 10pt;
+}
+
+.footer-text{
+    font-size: 10pt;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
