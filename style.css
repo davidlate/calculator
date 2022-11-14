@@ -89,12 +89,12 @@ button{
     font-weight: bold;
     background-color: rgb(255, 224, 220);
 }
-
+/*
 .disabled{
     background-color: rgb(172, 172, 172);
     color: grey;
 }
-
+*/
 #equals{
     grid-column-start: 2;
     grid-column-end: 4;
