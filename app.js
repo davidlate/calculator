@@ -48,7 +48,7 @@ function updatePage(e){
 
     else if (selection.id == 'clear-all')   clearAll();
 
-    selection.blur();
+    //selection.blur();
     console.log(selection)
 
 }
@@ -62,9 +62,11 @@ function getId(e){  //process info from event listeners based on if it is a clic
 
     if(e.type == 'keydown') {
         let fn;
-        if (e.key = "Enter") fn = document.querySelector(`#equals`);
-        else fn = document.querySelector(`[data-key="${e.key}"]`);
-        if (fn === null) return;
+        fn = document.querySelector(`[data-key="${e.key}"]`);
+        if (fn === null){
+            if (e.key = "Enter") fn = document.querySelector(`#equals`);
+            else return;
+        }
         result = fn;
     }
     return result
