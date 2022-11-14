@@ -24,17 +24,18 @@ function updatePage(e){
     if (selection.id !== 'clear-error') clearCounter = 0; //Used for double-click clear all functionality
 
 
-    if (queue[3] == '=' && selection.id !== 'equals'){ //Used to reinitialize after pressing equals
+    if (queue[3] == '=' && (selection.classList.contains('number'))){ //Used to reinitialize after pressing equals
         clearAll();
         queue[3] = '';
     }
 
 
-    if (selection.classList.contains('number'))             appendNum(selection);
+    if (selection.classList.contains('pm')) pm();
+
+    else if (selection.classList.contains('number'))             appendNum(selection);
 
     else if (selection.classList.contains('operation'))     appendOp(selection);
 
-    else if (selection.classList.contains('pm')) pm();
 
     else if (selection.id == 'equals')      equals();
 
@@ -48,10 +49,10 @@ function updatePage(e){
 
     else if (selection.id == 'clear-all')   clearAll();
 
-    selection.blur(); 
+    selection.blur();
+    e.preventDefault();
 
 }
-
 
 
 function getId(e){  //process info from event listeners based on if it is a click or keydown
@@ -61,7 +62,8 @@ function getId(e){  //process info from event listeners based on if it is a clic
         let fn;
         fn = document.querySelector(`[data-key="${e.key}"]`);
         if (fn === null){
-            if (e.key = "Enter") fn = document.querySelector(`#equals`);
+            if (e.key === "Enter") fn = document.querySelector(`#equals`);
+            else if (e.key === "Backspace") fn = document.querySelector(`#clear-error`)
             else return;
         }
         result = fn;
@@ -94,6 +96,7 @@ function appendNum(selection){
 function clearError(){
     lowInputText = '';
     lowInput.textContent = lowInputText + '0';
+    if (queue[3]=='=') clearAll();
 }
 
 
@@ -115,7 +118,16 @@ function appendOp(selection){       //What to do when operation button is presse
 
     if (lowInputText == '') return; //Do not proceed if no numbers put in
     
-    if (queue[1] !== ''){   //If there's already an op queued in the upper window
+
+    if (queue[3]=='='){
+        queue[0] = lowInputText
+        queue[1] = op;
+        queue[2] = '';
+        queue[3] = '';
+        enableDecimal()
+    }
+
+    else if (queue[1] !== ''){   //If there's already an op queued in the upper window
         queue[2] = lowInputText;    //add newly input numbers to queue and perform previously selected operation
         queue[0] = evaluate(queue); //operate on queue
         queue[1] = op;  //add new operation to queue
@@ -154,19 +166,36 @@ function equals(){
 }
 
 function evaluate(queue){   //evaluate queued operations
-    let result
+    let result;
+    let dec0 =0; //number of decimals in first operand
+    let dec2 =0;//number of decimals in first operand
+    let decCorrect=0;
+    queue[0] = String(queue[0]);
+    queue[2] = String(queue[2]);
+    // if there is a decimal in each operand, set dec1 and dec2 to the number of decimals
+    if (queue[0].split('.').length == 2) dec0 = queue[0].split('.')[1].length;
+    if (queue[2].split('.').length == 2) dec2 = queue[2].split('.')[1].length;
+
+
+    if (dec0 > dec2) decCorrect = dec0*10;
+    else decCorrect = dec2*10;
+
+    if (decCorrect == 0) decCorrect = 1;
+
+    console.log(decCorrect)
+
     switch (queue[1]){
         case '-':
-            result = queue[0] - queue[2];
+            result = ((decCorrect*(Number(queue[0]))) - (decCorrect*Number(queue[2])))/decCorrect;
             break;
         case '+':
-            result = Number(queue[0]) + Number(queue[2]);
+            result = ((decCorrect*(Number(queue[0]))) + (decCorrect*Number(queue[2])))/decCorrect;
             break;
         case '/':
-            result = queue[0] / queue[2];
+            result = ((decCorrect*(Number(queue[0]))) / (decCorrect*Number(queue[2])));
             break;
         case '*':
-            result = queue[0] * queue[2]
+            result = ((decCorrect*(Number(queue[0]))) * (decCorrect*Number(queue[2])))/(decCorrect*decCorrect)
             break;
 
     }
@@ -183,7 +212,6 @@ function pm(){
 
     if (lowInput.textContent.includes('-')) lowInputText = lowInputText.replace('-', '');
     else lowInputText = '-'+lowInputText;
-    
     if (lowInput.textContent == '0' || lowInput.textContent == '-0') lowInput.textContent = lowInputText + '0';
     else lowInput.textContent = lowInputText;
 }
