@@ -27,7 +27,7 @@ body{
 
 
 .calculator-container{
-    height: 75vh;
+    height: 70vh;
     width: 85vw;
     max-width: 400px;
     border-radius: 10px;
@@ -63,7 +63,7 @@ body{
 }
 
 .button-container{
-    height: 62vh;
+    height: 57vh;
     display: grid;
     grid-template-columns: 3fr 1fr 1fr;
     gap: 5px;
