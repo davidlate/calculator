@@ -1,40 +1,45 @@
-window.addEventListener('keydown', updatePage)
 
+//Author: David Earley 2022
 const buttons = document.querySelectorAll('button');
 const uppInput = document.querySelector('.upper-input');
 const lowInput = document.querySelector('.lower-input');
+
+window.addEventListener('keydown', updatePage)
 buttons.forEach(btn => btn.addEventListener('click', updatePage))
 
 
-lowInputText = '';
+lowInputText = ''; //set as 0 in html for both text boxes
 uppInputText = '';
 uppInputNum = '';
-decimalUsed = false;
-clearCounter = 0;
-queue = ['', '', ''];
+clearCounter = 0; //used for CE double-click functionality
+queue = ['', '', '', '']; //operation queue for calculations;
 
 
 
 function updatePage(e){
 
-    selection = getId(e);
-    
-    if (getId(e) === null || getId(e) === undefined) return;
-    if (selection.id !== 'clear-error') clearCounter = 0;
-    
-    
+    selection = getId(e); //get target from event listeners
+
+    if (getId(e) === null || getId(e) === undefined) return; //return if not valid input
+    if (selection.id !== 'clear-error') clearCounter = 0; //Used for double-click clear all functionality
 
 
-    if (selection.classList.contains('number')){
-         appendNum(selection);
-    }
-
-    else if (selection.classList.contains('operation')){
-        appendOp(selection);
+    if (queue[3] == '=' && selection.id !== 'equals'){ //Used to reinitialize after pressing equals
+        clearAll();
+        queue[3] = '';
     }
 
 
-    else if (selection.id=='clear-error'){
+    if (selection.classList.contains('number'))             appendNum(selection);
+
+    else if (selection.classList.contains('operation'))     appendOp(selection);
+
+
+    else if (selection.id == 'equals')      equals();
+
+
+
+    else if (selection.id=='clear-error'){  //clears error if CE clicked once.  clears all if CE clicked twice
         if (clearCounter == 0){
             clearError();
             clearCounter ++;
@@ -42,10 +47,7 @@ function updatePage(e){
         else clearAll();
     }
 
-
-    else if (selection.id == 'clear-all'){
-        clearAll();
-    }
+    else if (selection.id == 'clear-all')   clearAll();
 
 
     console.log(queue)
@@ -55,7 +57,7 @@ function updatePage(e){
 
 
 
-function getId(e){
+function getId(e){  //process info from event listeners based on if it is a click or keydown
     if (e.type == 'click') result = e.target;
 
     if(e.type == 'keydown') {
@@ -69,14 +71,15 @@ function getId(e){
 
 function appendNum(selection){
         let append = selection.id
-        if (append == '.') {
+        if (append == '.') {    //this statement is used to add, and then disable the decimal key
             if (selection.classList.contains('disabled')) append = '';
             else {
                 selection.classList.add('disabled');
-                append = '0.';
+                if (lowInputText == '') append = '0.' //add 0 to left of decimal if needed.
             }
         }
-        lowInputText += append;
+        
+        if (lowInputText.length < 15) lowInputText += append;
         lowInput.textContent = lowInputText;
 }
 
@@ -87,39 +90,39 @@ function clearError(){
 }
 
 
-function clearAll(){
+function clearAll(){        //reset calculator
     lowInputText = '';
     uppInputText = '';
     uppInputNum = '';
-    decimalUsed = false;
     clearCounter = 0;
-    queue = ['', '', ''];
+    queue = ['', '', '', ''];
 
     lowInput.textContent = lowInputText + '0';
     uppInput.textContent = uppInputText + '0';
-    
-    document.querySelectorAll('.disabled')
-        .forEach(btn => btn.classList.remove('disabled'))
+    enableButtons();
+
 
 }
 
 
-function appendOp(selection){
+function appendOp(selection){       //What to do when operation button is pressed
     op = selection.dataset.key;
 
-    if (lowInputText == '') return;
+    if (lowInputText == '') return; //Do not proceed if no numbers put in
     
-    if (queue[1] !== ''){
-        queue[2] = lowInputText;
-        queue[0] = evaluate(queue);
-        queue[1] = op;
-        queue[2] = '';
+    if (queue[1] !== ''){   //If there's already an op queued in the upper window
+        queue[2] = lowInputText;    //add newly input numbers to queue and perform previously selected operation
+        queue[0] = evaluate(queue); //operate on queue
+        queue[1] = op;  //add new operation to queue
+        queue[2] = '';  //create empty space for next number input
+        enableButtons();
     }
 
-    else{
+    else{   
         queue[0] = lowInputText;
         queue[1] = op;
         queue[2] = '';
+        enableButtons();
     }
 
 
@@ -129,25 +132,49 @@ function appendOp(selection){
     lowInput.textContent = lowInputText;
 }
 
+function equals(){
+    if (queue[1] !== '' && lowInputText !== ''&& queue[3] !== '='){
+        queue[2] = lowInputText;
+        queue[3] = '=';
+        console.log(lowInputText)
+        result = evaluate(queue)
 
-function evaluate(queue){
+        lowInputText = result;
+        uppInputText = queue[0] + queue[1] + queue [2] + '=';
+
+        lowInput.textContent = lowInputText;
+        uppInput.textContent = uppInputText;
+        enableButtons();
+    }
+
+    else queue[3] = '=';
+}
+
+
+function evaluate(queue){   //evaluate queued operations
+    let result
     switch (queue[1]){
         case '-':
-            queue[0] = queue[0] - queue[2];
+            result = queue[0] - queue[2];
             break;
         case '+':
-            queue[0] = Number(queue[0]) + Number(queue[2]);
+            result = Number(queue[0]) + Number(queue[2]);
             break;
         case '/':
-            queue[0] = queue[0] / queue[2];
+            result = queue[0] / queue[2];
             break;
         case '*':
-            queue[0] = queue[0] * queue[2]
+            result = queue[0] * queue[2]
             break;
 
     }
-        return queue[0];
+        return result;
 
     
 }
 
+function enableButtons(){
+    document.querySelectorAll('.disabled')
+    .forEach(btn => btn.classList.remove('disabled'));
+
+}
