@@ -48,12 +48,9 @@ function updatePage(e){
 
     else if (selection.id == 'clear-all')   clearAll();
 
-    //selection.blur();
-    console.log(selection)
+    selection.blur(); 
 
 }
-
-
 
 
 
@@ -83,6 +80,12 @@ function appendNum(selection){
             }
         }
         
+
+        if (queue[1] != ''){ //if there is an operation queued enable equals button
+            document.querySelector('#equals').classList.remove('disabled');
+        }
+
+
         if (lowInputText.length < 15) lowInputText += append;
         lowInput.textContent = lowInputText;
 }
@@ -102,8 +105,8 @@ function clearAll(){        //reset calculator
     queue = ['', '', '', ''];
     lowInput.textContent = lowInputText + '0';
     uppInput.textContent = uppInputText + '0';
-    enableButtons();
-
+    enableDecimal();
+    document.querySelector('#equals').classList.add('disabled')
 
 }
 
@@ -117,17 +120,16 @@ function appendOp(selection){       //What to do when operation button is presse
         queue[0] = evaluate(queue); //operate on queue
         queue[1] = op;  //add new operation to queue
         queue[2] = '';  //create empty space for next number input
-        enableButtons();
+        enableDecimal();
     }
 
     else{   
         queue[0] = lowInputText;
         queue[1] = op;
         queue[2] = '';
-        enableButtons();
+        enableDecimal();
     }
 
-    document.querySelector('#equals').classList.remove('disabled');
     uppInputText = queue.join('');
     uppInput.textContent = uppInputText;
     lowInputText = '';
@@ -145,7 +147,8 @@ function equals(){
 
         lowInput.textContent = lowInputText;
         uppInput.textContent = uppInputText;
-        enableButtons();
+        document.querySelector('#equals').classList.add('disabled');
+        enableDecimal();
     }
 
 }
@@ -172,10 +175,8 @@ function evaluate(queue){   //evaluate queued operations
     
 }
 
-function enableButtons(){
-    document.querySelectorAll('.disabled')
-    .forEach(btn => btn.classList.remove('disabled'));
-
+function enableDecimal(){
+    document.querySelector('#\\.').classList.remove('disabled');
 }
 
 function pm(){ 
