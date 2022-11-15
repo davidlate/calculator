@@ -197,7 +197,7 @@ function evaluate(queue){   //evaluate queued operations
     
     numDecimalsInResult = String(result).split('.')[1].length;
 
-    if (numDecimalsInResult >=8) result = Math.round(result*10000000)/10000000;
+    if (numDecimalsInResult >=8) result = Math.round(result*1e8)/1e8;
 
     return result;
 
