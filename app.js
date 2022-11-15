@@ -54,7 +54,6 @@ function updatePage(e){
 
 }
 
-
 function getId(e){  //process info from event listeners based on if it is a click or keydown
     if (e.type == 'click') result = e.target;
 
@@ -70,7 +69,6 @@ function getId(e){  //process info from event listeners based on if it is a clic
     }
     return result
 }
-
 
 function appendNum(selection){
         let append = selection.id
@@ -92,13 +90,11 @@ function appendNum(selection){
         lowInput.textContent = lowInputText;
 }
 
-
 function clearError(){
     lowInputText = '';
     lowInput.textContent = lowInputText + '0';
     if (queue[3]=='=') clearAll();
 }
-
 
 function clearAll(){        //reset calculator
     lowInputText = '';
@@ -177,12 +173,11 @@ function evaluate(queue){   //evaluate queued operations
     if (queue[2].split('.').length == 2) dec2 = queue[2].split('.')[1].length;
 
 
-    if (dec0 > dec2) decCorrect = dec0*10;
+    if (dec0 > dec2) decCorrect = dec0*10; //floating point error correction factor
     else decCorrect = dec2*10;
 
     if (decCorrect == 0) decCorrect = 1;
 
-    console.log(decCorrect)
 
     switch (queue[1]){
         case '-':
@@ -199,7 +194,12 @@ function evaluate(queue){   //evaluate queued operations
             break;
 
     }
-        return result;
+    
+    numDecimalsInResult = String(result).split('.')[1].length;
+
+    if (numDecimalsInResult >=8) result = Math.round(result*10000000)/10000000;
+
+    return result;
 
     
 }
