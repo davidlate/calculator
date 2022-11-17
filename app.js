@@ -166,6 +166,7 @@ function evaluate(queue){   //evaluate queued operations
     let dec0 =0; //number of decimals in first operand
     let dec2 =0;//number of decimals in first operand
     let decCorrect=0;
+    let numDecimalsInResult = 0;
     queue[0] = String(queue[0]);
     queue[2] = String(queue[2]);
     // if there is a decimal in each operand, set dec1 and dec2 to the number of decimals
@@ -194,8 +195,8 @@ function evaluate(queue){   //evaluate queued operations
             break;
 
     }
-    
-    numDecimalsInResult = String(result).split('.')[1].length;
+    console.log(result)
+    if (String(result).split('.').length == 2) numDecimalsInResult = String(result).split('.')[1].length;
 
     if (numDecimalsInResult >=8) result = Math.round(result*1e8)/1e8;
 
